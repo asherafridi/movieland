@@ -1,31 +1,27 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import './App.css';
 import Card from "./Components/Card";
+import SearchIcon from "./search.png";
 
 //f2ad7848
 
 const API_URL= "https://www.omdbapi.com/?apikey=f2ad7848";
 
 
-const movie1={
-    "Title": "Main Tera Hero",
-    "Year": "2014",
-    "imdbID": "tt2762334",
-    "Type": "movie",
-    "Poster": "https://m.media-amazon.com/images/M/MV5BZjBiYWU0ZmMtZDE0NC00ZTUxLWE3OTQtY2YyNjVjMTRlOGJjXkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_SX300.jpg"
-};
 const App = ()=>{
+    const [movies,setMovies] = useState([]);
+    const [search,setSearch] = useState("Spider");
 
     const searchMovies= async ($title)=>{
         const response = await fetch(`${API_URL}&s=${$title}`);
         const data = await response.json();
 
-        console.log(data.Search);
+        setMovies(data.Search);
     };
 
 
     useEffect(()=>{
-        searchMovies("Main Tera");
+        searchMovies(search);
     },[]);
     return (
         <div className="app">
@@ -33,17 +29,30 @@ const App = ()=>{
         <div className="search">
             <input 
                 placeholder="Search"
-                value="Superman"
-                onChange={()=>{}}
+                value={search}
+                onChange={event => setSearch(event.target.value)}
             />
-            {/* <img src={} /> */}
+            <img src={SearchIcon} 
+            onClick={()=>{ searchMovies(search)}}
+            />
         </div>
         <div className="container">
-        <Card movie1={movie1}/>
-        <Card movie1={movie1}/>
-        <Card movie1={movie1}/>
-        <Card movie1={movie1}/>
-        <Card movie1={movie1}/>
+            {
+                movies?.length > 0 ? 
+                (
+                    <div className="container">
+                        {
+                            movies.map((movie)=>(
+                                <Card movie1={movie}/>
+                            ))
+                        }
+                    </div>
+                ) : (
+                    <div className="empty">
+                        <h2>Empty</h2>
+                    </div>
+                )
+            }
         </div>
         </div>
     );
